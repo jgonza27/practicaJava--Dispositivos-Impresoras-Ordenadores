@@ -6,7 +6,8 @@ public class Main {
 
         Dispositivo dis = new Dispositivo("BMW", "serie 3", true);
         dis.save("Dispositivo.bin");
-       
+        // dis.leerArchivo("Dispositivo.bin");
+
     }
 
 }

@@ -27,23 +27,33 @@ public class Dispositivo {
     public int save(String nombreFichero) {
         try {
             RandomAccessFile raf = new RandomAccessFile(nombreFichero, "rw");
-            int longitudFija = 20;
-            if (marca.length() < longitudFija) {
-                marca = String.format("%-" + longitudFija + "s", marca);
+
+            for (int i = 0; i < raf.length(); i++) {
+                raf.seek(i);
+                int b = raf.read();
+                if (b == id) {
+                    int longitudFija = 20;
+                    if (marca.length() < longitudFija) {
+                        marca = String.format("%-" + longitudFija + "s", marca).replace(' ', '0');
+                    }
+
+                    if (modelo.length() < longitudFija) {
+                        modelo = String.format("%-" + longitudFija + "s", modelo).replace(' ', '0');
+                    }
+
+                    raf.writeInt(id);
+                    raf.writeUTF(marca);
+                    raf.writeUTF(modelo);
+                    raf.writeBoolean(estado);
+
+                } else if (i == raf.length()) {
+                    raf.writeInt(id);
+                    raf.writeUTF(marca);
+                    raf.writeUTF(modelo);
+                    raf.writeBoolean(estado);
+
+                }
             }
-
-            if (modelo.length() < longitudFija) {
-                modelo = String.format("%-" + longitudFija + "s", modelo);
-            }
-            raf.writeInt(id);
-            raf.writeBytes(marca);
-            raf.writeBytes(modelo);
-            raf.writeBoolean(estado);
-
-            raf.seek(4);
-
-            
-            System.out.println(raf.length());
 
         } catch (IOException e) {
 
