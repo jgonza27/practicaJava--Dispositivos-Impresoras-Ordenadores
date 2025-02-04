@@ -14,6 +14,7 @@ public class Ordenador extends Dispositivo {
         this.procesador = procesador;
         this.tamDisco = tamDisco;
         this.tipoDisco = tipoDisco;
+        this.tipo = 2;
 
     }
 
@@ -26,6 +27,7 @@ public class Ordenador extends Dispositivo {
     }
 
     public int save(String nombreFichero) {
+        super.save();
         try (RandomAccessFile raf = new RandomAccessFile(nombreFichero, "rw")) {
             boolean encontrado = false;
             int nuevoId = 1;
@@ -41,7 +43,6 @@ public class Ordenador extends Dispositivo {
                 int tamDiscoLeido = raf.readInt();
                 int tipoDiscoLeido = raf.readInt();
 
-                
                 nuevoId = idLeido + 1;
             }
 

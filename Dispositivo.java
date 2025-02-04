@@ -5,20 +5,24 @@ public class Dispositivo {
 
     Scanner sc = new Scanner(System.in);
     static int idnuevo;
-    private int id;
+    private long id;
     private String marca;
     private String modelo;
     private boolean estado;
-    private int tipo;
+    protected int tipo;
     private boolean borrado = false;
     private int idAjeno;
     private String funciona;
+    private long ultimoId;
 
     public Dispositivo(String marca, String modelo, boolean estado) {
         this.marca = marca;
         this.modelo = modelo;
         this.estado = estado;
-
+        this.tipo = 1;
+        this.borrado = false;
+        this.idAjeno = -1;
+        this.id = ultimoId + 1;
     }
 
     public Dispositivo(int id) {
@@ -26,6 +30,44 @@ public class Dispositivo {
         this.marca = "";
         this.modelo = "";
         this.estado = true;
+    }
+
+    public int save() {
+        int longitudFija = 20;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+            raf.seek(raf.length());
+            long a = raf.getFilePointer() - 46;
+            raf.seek(a);
+            long ultimoId = raf.readLong();
+
+            raf.seek(raf.length());
+
+            raf.writeLong(this.id);
+
+            long posAntes = raf.getFilePointer();
+            raf.writeUTF(this.marca);
+            long posDespues = raf.getFilePointer();
+            long bytesEscritos = posDespues - posAntes;
+            for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                raf.writeByte(0);
+            }
+
+            posAntes = raf.getFilePointer();
+            raf.writeUTF(this.modelo);
+            posDespues = raf.getFilePointer();
+            bytesEscritos = posDespues - posAntes;
+            for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                raf.writeByte(0);
+            }
+            raf.writeBoolean(this.estado);
+            raf.writeBoolean(this.borrado);
+
+        } catch (IOException e) {
+            return 1;
+        }
+
+        return 0;
     }
 
     public int delete() {
@@ -76,61 +118,13 @@ public class Dispositivo {
             raf.readFully(modeloBytes);
             String nuevoModelo = new String(modeloBytes).trim();
             boolean estadoLeido = raf.readBoolean();
-            if (estadoLeido == true) {
-                funcionaLeido = "Funciona";
-
-            } else {
-                funcionaLeido = "No funciona ";
-            }
             boolean borradoLeido = raf.readBoolean();
-
-            if (borradoLeido == true) {
-
-                nuevoBorrado = "Borrado";
-
-            } else {
-                nuevoBorrado = "No Borrado";
-            }
 
             System.out.println("ID: " + idLeido + ", Marca: " + nuevaMarca + ", Modelo: " + nuevoModelo + ", Estado: " +
                     funcionaLeido + ", Borrado: " + nuevoBorrado);
         } catch (Exception e) {
             return 1;
         }
-        return 0;
-    }
-
-    public int save() {
-        int longitudFija = 20;
-        idnuevo = idnuevo + 1;
-        String fija;
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-
-            System.out.println("Escribe la marca");
-            marca = sc.nextLine();
-            System.out.println("Escribe el modelo");
-            modelo = sc.nextLine();
-            System.out.println("Escribe el estado:Funciona o No funciona");
-            funciona = sc.nextLine();
-
-            if (funciona.equals("Funciona")) {
-                estado = true;
-            } else
-                estado = false;
-
-            raf.seek(raf.length());
-            raf.writeInt(idnuevo);
-            fija = String.format("%-" + longitudFija + "s", marca);
-            raf.writeBytes(fija);
-            fija = String.format("%-" + longitudFija + "s", modelo);
-            raf.writeBytes(fija);
-            raf.writeBoolean(estado);
-            raf.writeBoolean(false);
-
-        } catch (IOException e) {
-            return 1;
-        }
-
         return 0;
     }
 

@@ -6,9 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Dispositivo dis = new Dispositivo("wewe", "s12312", true);
-        Ordenador or = new Ordenador(null, null, false);
-        ArrayList<Dispositivo> ListaDispositivos = new ArrayList<>();
+
         int a = 1;
         do {
             System.out.println("MENÚ PRINCIPAL\r\n" + //
@@ -23,15 +21,24 @@ public class Main {
             a = sc.nextInt();
             switch (a) {
                 case 1:
+
                     System.out.println(
                             "Introduce 1,si quieres introducir un dispositivo,introduce un 2 si quieres introducir un ordenador,introduce un 3 si quieres introducir una impresora");
                     int b = sc.nextInt();
 
                     switch (b) {
                         case 1:
-                            int c = dis.save();
 
-                            if (c == 0) {
+                            System.out.println("Escribe la marca");
+                            String marca = sc.nextLine();
+                            sc.nextLine();
+                            System.out.println("Escribe el modelo");
+                            String modelo = sc.nextLine();
+
+                            Dispositivo dis = new Dispositivo(marca, modelo, true);
+                            b = dis.save();
+
+                            if (b == 0) {
                                 System.out.println("Todo correcto!");
 
                             } else {
@@ -40,45 +47,46 @@ public class Main {
 
                             break;
 
-                    } 
-                    break;
-
-                case 2:
-                    b = dis.mostrarDispositivos();
-                    if (b == 0) {
-                        System.out.println("Todo correcto!");
-
-                    } else {
-                        System.out.println("Halgo ha salido mal");
                     }
                     break;
-
-                case 3:
-
-                    b = dis.load();
-                    if (b == 0) {
-                        System.out.println("Todo correcto!");
-
-                    } else {
-                        System.out.println("Halgo ha salido mal");
-                    }
-                    break;
-
-                case 4:
-                    b = dis.delete();
-                    if (b == 0) {
-                        System.out.println("Todo correcto!");
-
-                    } else {
-                        System.out.println("Halgo ha salido mal");
-                    }
-
-                    break;
-
-                case 0:
-                    System.out.println("¡Hasta Luego!");
-                    break;
-
+                /*
+                 * case 2:
+                 * b = dis.mostrarDispositivos();
+                 * if (b == 0) {
+                 * System.out.println("Todo correcto!");
+                 * 
+                 * } else {
+                 * System.out.println("Halgo ha salido mal");
+                 * }
+                 * break;
+                 * 
+                 * case 3:
+                 * 
+                 * b = dis.load();
+                 * System.out.println(dis.toString());
+                 * if (b == 0) {
+                 * System.out.println("Todo correcto!");
+                 * 
+                 * } else {
+                 * System.out.println("Halgo ha salido mal");
+                 * }
+                 * break;
+                 * 
+                 * case 4:
+                 * b = dis.delete();
+                 * if (b == 0) {
+                 * System.out.println("Todo correcto!");
+                 * 
+                 * } else {
+                 * System.out.println("Halgo ha salido mal");
+                 * }
+                 * 
+                 * break;
+                 * 
+                 * case 0:
+                 * System.out.println("¡Hasta Luego!");
+                 * break;
+                 */
             }
         } while (a != 0);
 
