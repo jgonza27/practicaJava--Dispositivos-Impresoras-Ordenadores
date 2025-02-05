@@ -1,5 +1,3 @@
-import java.io.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -7,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        int a = 1;
+        int a;
         do {
             System.out.println("MENÚ PRINCIPAL\r\n" + //
                     "--------------\r\n" + //
@@ -23,7 +21,7 @@ public class Main {
                 case 1:
 
                     System.out.println(
-                            "Introduce 1,si quieres introducir un dispositivo,introduce un 2 si quieres introducir un ordenador,introduce un 3 si quieres introducir una impresora");
+                            "Introduce 1 para añadir un dispositivo,2 para añadir un ordenador , 3 para añadir una impresora");
                     int b = sc.nextInt();
 
                     switch (b) {
@@ -47,46 +45,37 @@ public class Main {
 
                             break;
 
+                        case 2:
+
+                            System.out.println("Escribe la marca");
+                            marca = sc.nextLine();
+                            sc.nextLine();
+                            System.out.println("Escribe el modelo");
+                            modelo = sc.nextLine();
+                            System.out.println("Escribe la ram");
+                            int ram = sc.nextInt();
+                            System.out.println("Escribe el procesador");
+                            String procesador = sc.nextLine();
+                            System.out.println("Escribe el tamaño del disco");
+                            int tamDisco = sc.nextInt();
+                            System.out.println("Escribe el tipo de disco");
+                            int tipoDisco = sc.nextInt();
+                            Ordenador or = new Ordenador(marca, modelo, true, ram, procesador, tamDisco, tipoDisco);
+
+                            b = or.save();
+
+                            if (b == 0) {
+                                System.out.println("Todo correcto!");
+
+                            } else {
+                                System.out.println("Halgo ha salido mal");
+                            }
+
+                            break;
+
                     }
                     break;
-                /*
-                 * case 2:
-                 * b = dis.mostrarDispositivos();
-                 * if (b == 0) {
-                 * System.out.println("Todo correcto!");
-                 * 
-                 * } else {
-                 * System.out.println("Halgo ha salido mal");
-                 * }
-                 * break;
-                 * 
-                 * case 3:
-                 * 
-                 * b = dis.load();
-                 * System.out.println(dis.toString());
-                 * if (b == 0) {
-                 * System.out.println("Todo correcto!");
-                 * 
-                 * } else {
-                 * System.out.println("Halgo ha salido mal");
-                 * }
-                 * break;
-                 * 
-                 * case 4:
-                 * b = dis.delete();
-                 * if (b == 0) {
-                 * System.out.println("Todo correcto!");
-                 * 
-                 * } else {
-                 * System.out.println("Halgo ha salido mal");
-                 * }
-                 * 
-                 * break;
-                 * 
-                 * case 0:
-                 * System.out.println("¡Hasta Luego!");
-                 * break;
-                 */
+
             }
         } while (a != 0);
 

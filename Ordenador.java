@@ -1,11 +1,12 @@
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 public class Ordenador extends Dispositivo {
     private int ram;
     private String procesador;
     private int tamDisco;
     private int tipoDisco;
+    private int tipo;
+    private int ultimoId;
 
     public Ordenador(String marca, String modelo, boolean estado, int ram, String procesador, int tamDisco,
             int tipoDisco) {
@@ -26,73 +27,99 @@ public class Ordenador extends Dispositivo {
         this.tipoDisco = 0;
     }
 
-    public int save(String nombreFichero) {
-        super.save();
-        try (RandomAccessFile raf = new RandomAccessFile(nombreFichero, "rw")) {
-            boolean encontrado = false;
-            int nuevoId = 1;
+    public int save() {
+        // super.save();
+        int longitudFija = 20;
 
-            while (raf.getFilePointer() < raf.length()) {
-                int idLeido = raf.readInt();
-                String marcaLeida = raf.readUTF();
-                String modeloLeido = raf.readUTF();
-                boolean estadoLeido = raf.readBoolean();
-                boolean borradoLeido = raf.readBoolean();
-                int ramLeida = raf.readInt();
-                String procesadorLeido = raf.readUTF();
-                int tamDiscoLeido = raf.readInt();
-                int tipoDiscoLeido = raf.readInt();
+        try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw")) {
 
-                nuevoId = idLeido + 1;
-            }
-
-            if (!encontrado) {
+            if (raf.length() != 0) {
                 raf.seek(raf.length());
-                raf.writeInt(nuevoId);
-                raf.writeUTF(super.getMarca());
-                raf.writeUTF(super.getModelo());
-                raf.writeBoolean(super.isEstado());
-                raf.writeInt(ram);
-                raf.writeUTF(procesador);
-                raf.writeInt(tamDisco);
-                raf.writeInt(tipoDisco);
+                long a = raf.getFilePointer() - 36;
+                raf.seek(a);
+                ultimoId = raf.readInt();
 
+                raf.seek(raf.length());
+
+                raf.writeInt(ultimoId + 1);
+                raf.writeInt(ram);
+                long posAntes = raf.getFilePointer();
+                raf.writeUTF(this.procesador);
+                long posDespues = raf.getFilePointer();
+                long bytesEscritos = posDespues - posAntes;
+                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                    raf.writeByte(0);
+                }
+
+                raf.writeInt(tamDisco);
+                raf.write(tipoDisco);
+
+            } else {
+                raf.writeInt(1);
+                raf.writeInt(ram);
+                long posAntes = raf.getFilePointer();
+                raf.writeUTF(this.procesador);
+                long posDespues = raf.getFilePointer();
+                long bytesEscritos = posDespues - posAntes;
+                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                    raf.writeByte(0);
+                }
+
+                raf.writeInt(tamDisco);
+                raf.write(tipoDisco);
+                añadirIdAjeno();
             }
+
         } catch (IOException e) {
             return 1;
         }
+
         return 0;
     }
 
-    public int load(String nombreFichero) {
-        System.out.println("Introduce el ID:");
+    public void añadirIdAjeno() {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo", "rw")) {
 
-        int idBuscar = sc.nextInt();
+            raf.seek(raf.length());
+            long a = raf.getFilePointer();
+            raf.seek(a);
+            raf.writeInt(ultimoId + 1);
 
-        try (RandomAccessFile raf = new RandomAccessFile(nombreFichero, "r")) {
-            while (raf.getFilePointer() < raf.length()) {
-                int idLeido = raf.readInt();
-                String marcaLeida = raf.readUTF();
-                String modeloLeido = raf.readUTF();
-                boolean estadoLeido = raf.readBoolean();
-                boolean borradoLeido = raf.readBoolean();
-                int ramLeida = raf.readInt();
-                String procesadorLeido = raf.readUTF();
-                int tamDiscoLeido = raf.readInt();
-                int tipoDiscoLeido = raf.readInt();
-
-                if (idLeido == idBuscar) {
-                    System.out.println(toString());
-                    return 0;
-                }
-            }
-            System.out.println("Ese dispositivo no se encuentra en el fichero.");
         } catch (Exception e) {
-            return 1;
+            // TODO: handle exception
         }
-        return 0;
     }
 
+    /*
+     * public int load(String nombreFichero) {
+     * System.out.println("Introduce el ID:");
+     * 
+     * int idBuscar = sc.nextInt();
+     * 
+     * try (RandomAccessFile raf = new RandomAccessFile(nombreFichero, "r")) {
+     * while (raf.getFilePointer() < raf.length()) {
+     * int idLeido = raf.readInt();
+     * String marcaLeida = raf.readUTF();
+     * String modeloLeido = raf.readUTF();
+     * boolean estadoLeido = raf.readBoolean();
+     * boolean borradoLeido = raf.readBoolean();
+     * int ramLeida = raf.readInt();
+     * String procesadorLeido = raf.readUTF();
+     * int tamDiscoLeido = raf.readInt();
+     * int tipoDiscoLeido = raf.readInt();
+     * 
+     * if (idLeido == idBuscar) {
+     * System.out.println(toString());
+     * return 0;
+     * }
+     * }
+     * System.out.println("Ese dispositivo no se encuentra en el fichero.");
+     * } catch (Exception e) {
+     * return 1;
+     * }
+     * return 0;
+     * }
+     */
     public int getRam() {
         return ram;
     }
