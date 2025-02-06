@@ -7,6 +7,7 @@ public class Ordenador extends Dispositivo {
     private int tipoDisco;
     private int tipo;
     private int ultimoId;
+    private int id;
 
     public Ordenador(String marca, String modelo, boolean estado, int ram, String procesador, int tamDisco,
             int tipoDisco) {
@@ -19,26 +20,27 @@ public class Ordenador extends Dispositivo {
 
     }
 
-    public Ordenador(String marca, String modelo, boolean estado) {
-        super(marca, modelo, estado);
+    public Ordenador(int id) {
+
+        super("", "", true);
+        this.id = id;
         this.ram = 0;
         this.procesador = "";
         this.tamDisco = 0;
         this.tipoDisco = 0;
+        this.tipo = 2;
+
     }
 
     public int save() {
-        // super.save();
+        super.save();
         int longitudFija = 20;
 
         try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw")) {
 
             if (raf.length() != 0) {
-                raf.seek(raf.length());
-                long a = raf.getFilePointer() - 36;
-                raf.seek(a);
+                raf.seek(raf.length() - 36);
                 ultimoId = raf.readInt();
-
                 raf.seek(raf.length());
 
                 raf.writeInt(ultimoId + 1);
@@ -52,7 +54,9 @@ public class Ordenador extends Dispositivo {
                 }
 
                 raf.writeInt(tamDisco);
-                raf.write(tipoDisco);
+                raf.writeInt(tipoDisco);
+                añadirTipo();
+                añadirIdAjeno();
 
             } else {
                 raf.writeInt(1);
@@ -66,7 +70,8 @@ public class Ordenador extends Dispositivo {
                 }
 
                 raf.writeInt(tamDisco);
-                raf.write(tipoDisco);
+                raf.writeInt(tipoDisco);
+                añadirTipo();
                 añadirIdAjeno();
             }
 
@@ -78,16 +83,27 @@ public class Ordenador extends Dispositivo {
     }
 
     public void añadirIdAjeno() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo", "rw")) {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
 
-            raf.seek(raf.length());
-            long a = raf.getFilePointer();
-            raf.seek(a);
+            raf.seek(raf.length() - 4);
             raf.writeInt(ultimoId + 1);
+
+        } catch (Exception e) {
+            
+            // TODO: handle exception
+        }
+    }
+
+    public void añadirTipo() {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+
+            raf.seek(raf.length() - 8);
+            raf.writeInt(tipo);
 
         } catch (Exception e) {
             // TODO: handle exception
         }
+
     }
 
     /*

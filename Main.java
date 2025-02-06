@@ -1,12 +1,37 @@
+import java.util.ArrayList;
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        ArrayList<Byte> listaDispositivos = new ArrayList<>();
 
         int a;
         do {
+            /*
+             * try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+             * while (raf.getFilePointer() < raf.length()) {
+             * listaDispositivos.add(raf.readByte());
+             * 
+             * byte[] arrayBytes = new byte[listaDispositivos.size()];
+             * 
+             * // Convertimos el ArrayList<Byte> a un array de bytes
+             * for (int i = 0; i < listaDispositivos.size(); i++) {
+             * arrayBytes[i] = listaDispositivos.get(i);
+             * }
+             * 
+             * // Convertimos los bytes a String (usando UTF-8)
+             * String contenido = new String(arrayBytes, "UTF-8");
+             * System.out.println(contenido);
+             * 
+             * }
+             * 
+             * } catch (Exception e) {
+             * // TODO: handle exception
+             * }
+             */
             System.out.println("MENÚ PRINCIPAL\r\n" + //
                     "--------------\r\n" + //
                     "1. Añadir dispositivo\r\n" + //
@@ -56,6 +81,7 @@ public class Main {
                             int ram = sc.nextInt();
                             System.out.println("Escribe el procesador");
                             String procesador = sc.nextLine();
+                            sc.nextLine();
                             System.out.println("Escribe el tamaño del disco");
                             int tamDisco = sc.nextInt();
                             System.out.println("Escribe el tipo de disco");
@@ -72,8 +98,34 @@ public class Main {
                             }
 
                             break;
+                        case 3:
+                            System.out.println("Escribe la marca");
+                            marca = sc.nextLine();
+                            sc.nextLine();
+                            System.out.println("Escribe el modelo");
+                            modelo = sc.nextLine();
+                            System.out.println("Escribe el tipo");
+                            int tipoImpresora = sc.nextInt();
+                            System.out.println("Escribe el color");
+                            boolean color = sc.nextBoolean();
+                            System.out.println("Escribe el tipo de scanner");
+                            boolean scanner = sc.nextBoolean();
+                            Impresora im = new Impresora(marca, modelo, true, tipoImpresora, color, scanner);
+                            b = im.save();
+                            if (b == 0) {
+                                System.out.println("Todo correcto!");
+
+                            } else {
+                                System.out.println("Halgo ha salido mal");
+                            }
+
+                            break;
 
                     }
+                    case 2:
+
+                    System.out.println("Escribe el id");
+                    
                     break;
 
             }

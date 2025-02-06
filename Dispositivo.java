@@ -37,7 +37,7 @@ public class Dispositivo {
 
             if (raf.length() != 0) {
                 raf.seek(raf.length());
-                long a = raf.getFilePointer() - 46;
+                long a = raf.getFilePointer() - 54;
                 raf.seek(a);
                 int ultimoId = raf.readInt();
 
@@ -94,6 +94,16 @@ public class Dispositivo {
         }
 
         return 0;
+    }
+
+    public int load() {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", modelo)) {
+
+             
+
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
 
     /*
