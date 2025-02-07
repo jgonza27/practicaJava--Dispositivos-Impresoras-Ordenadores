@@ -9,7 +9,7 @@ public class Dispositivo {
     private String marca;
     private String modelo;
     private boolean estado;
-    protected int tipo;
+    private int tipo;
     private boolean borrado;
     private int idAjeno;
 
@@ -97,78 +97,32 @@ public class Dispositivo {
     }
 
     public int load() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", modelo)) {
+        int a;
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "r")) {
 
-             
+            do {
+                a = raf.readInt();
+                if (a == id) {
+                    long posAntes = raf.getFilePointer();
+                    String marca = raf.readUTF();
+                    long posDespues = raf.getFilePointer();
+                    int contador = 0;
+                    for (long i = posAntes; i <= posDespues; i++) {
+                        contador++;
+                    }
+                    int c = 20-contador
+
+                } else {
+                    raf.seek(raf.getFilePointer() + 54);
+                }
+
+            } while (a != id);
 
         } catch (Exception e) {
-            // TODO: handle exception
+            return 1;
         }
+        return 0;
     }
-
-    /*
-     * public int delete() {
-     * System.out.println("Introduce el ID para eliminar el dispositivo:");
-     * 
-     * int idBuscar = sc.nextInt();
-     * 
-     * try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-     * while (raf.getFilePointer() < raf.length()) {
-     * 
-     * int idLeido = raf.readInt();
-     * String marcaLeida = raf.readUTF();
-     * String modeloLeido = raf.readUTF();
-     * boolean estadoLeido = raf.readBoolean();
-     * boolean borradoLeido = raf.readBoolean();
-     * 
-     * if (idLeido == idBuscar) {
-     * raf.seek(raf.getFilePointer() - 1);
-     * raf.writeBoolean(true);
-     * System.out.println("ID: " + idLeido + ", Marca: " + marcaLeida + ", Modelo: "
-     * + modeloLeido +
-     * ", Estado: " + (estadoLeido ? "Funciona" : "No funciona") +
-     * ", Borrado: Borrado");
-     * return 0;
-     * }
-     * }
-     * System.out.println("Dispositivo no encontrado.");
-     * } catch (IOException e) {
-     * return 1;
-     * }
-     * return 0;
-     * }
-     * 
-     * public int load() {
-     * String funcionaLeido;
-     * String nuevoBorrado;
-     * int idLeido;
-     * System.out.println("Introduce el ID:");
-     * 
-     * int idBuscar = sc.nextInt();
-     * 
-     * try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "r")) {
-     * 
-     * raf.seek(idBuscar * 46);
-     * idLeido = raf.readInt();
-     * byte[] marcaBytes = new byte[20];
-     * raf.readFully(marcaBytes);
-     * String nuevaMarca = new String(marcaBytes).trim();
-     * byte[] modeloBytes = new byte[20];
-     * raf.readFully(modeloBytes);
-     * String nuevoModelo = new String(modeloBytes).trim();
-     * boolean estadoLeido = raf.readBoolean();
-     * boolean borradoLeido = raf.readBoolean();
-     * 
-     * System.out.println("ID: " + idLeido + ", Marca: " + nuevaMarca + ", Modelo: "
-     * + nuevoModelo + ", Estado: " +
-     * funcionaLeido + ", Borrado: " + nuevoBorrado);
-     * } catch (Exception e) {
-     * return 1;
-     * }
-     * return 0;
-     * }
-     * 
-     */
 
     @Override
     public String toString() {

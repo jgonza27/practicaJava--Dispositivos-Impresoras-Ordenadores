@@ -1,35 +1,35 @@
 import java.io.*;
 
 public class Ordenador extends Dispositivo {
+
     private int ram;
     private String procesador;
     private int tamDisco;
     private int tipoDisco;
-    private int tipo;
-    private int ultimoId;
     private int id;
 
     public Ordenador(String marca, String modelo, boolean estado, int ram, String procesador, int tamDisco,
             int tipoDisco) {
         super(marca, modelo, estado);
+        this.id = getUltimoId() + 1;
         this.ram = ram;
         this.procesador = procesador;
         this.tamDisco = tamDisco;
         this.tipoDisco = tipoDisco;
-        this.tipo = 2;
+        super.setIdAjeno(this.id);
+        super.setTipo(2);
 
     }
 
     public Ordenador(int id) {
-
-        super("", "", true);
-        this.id = id;
+        super(id);
+        super.load();
+        this.id = super.getIdAjeno();
         this.ram = 0;
         this.procesador = "";
         this.tamDisco = 0;
         this.tipoDisco = 0;
         this.tipo = 2;
-
     }
 
     public int save() {
@@ -39,12 +39,8 @@ public class Ordenador extends Dispositivo {
         try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw")) {
 
             if (raf.length() != 0) {
-                raf.seek(raf.length() - 36);
-                ultimoId = raf.readInt();
-                raf.seek(raf.length());
-
-                raf.writeInt(ultimoId + 1);
-                raf.writeInt(ram);
+                raf.writeInt(this.id)
+                raf.writeInt(this.ram);
                 long posAntes = raf.getFilePointer();
                 raf.writeUTF(this.procesador);
                 long posDespues = raf.getFilePointer();
@@ -89,7 +85,7 @@ public class Ordenador extends Dispositivo {
             raf.writeInt(ultimoId + 1);
 
         } catch (Exception e) {
-            
+
             // TODO: handle exception
         }
     }
@@ -108,6 +104,7 @@ public class Ordenador extends Dispositivo {
 
     /*
      * public int load(String nombreFichero) {
+     * 
      * System.out.println("Introduce el ID:");
      * 
      * int idBuscar = sc.nextInt();
@@ -190,5 +187,19 @@ public class Ordenador extends Dispositivo {
         }
         return super.toString() + " Procesador: " + procesador + "." + " Memoria: " + ram + "GB." + " Almacenamiento: "
                 + tamDisco + "GB" + tipoDiscoStr;
+    }
+
+    private int getUltimoId() {
+        int ultimoId = 0;
+        try {
+            RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw");
+            raf.seek(raf.length() - 36);
+            ultimoId = raf.readInt();
+            raf.seek(raf.length());
+            raf.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ultimoId;
     }
 }

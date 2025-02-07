@@ -122,10 +122,21 @@ public class Main {
                             break;
 
                     }
-                    case 2:
+                    break;
+                case 2:
+                    System.out.println("Introduce el id para mostrar el dispositivo");
+                    a = sc.nextInt();
+                    Dispositivo dis = new Dispositivo(a);
 
-                    System.out.println("Escribe el id");
-                    
+                    b = dis.load();
+
+                    if (b == 0) {
+                        System.out.println("Todo correcto!");
+
+                    } else {
+                        System.out.println("Halgo ha salido mal");
+                    }
+
                     break;
 
             }
