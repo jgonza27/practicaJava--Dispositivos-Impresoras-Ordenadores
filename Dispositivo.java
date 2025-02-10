@@ -97,51 +97,50 @@ public class Dispositivo {
 
     public int load() {
         int a;
-        int contador = 0;
         boolean encontrado = false;
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "r")) {
 
-            do {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "r")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
                 long b = raf.getFilePointer();
                 a = raf.readInt();
+
                 if (a == id) {
-
-                    long posAntes = raf.getFilePointer();
-                    marca = raf.readUTF();
-                    System.out.println(marca);
-                    long posDespues = raf.getFilePointer();
-
-                    for (posAntes = 0; posAntes <= posDespues; posAntes++) {
-                        contador++;
-                    }
-                    int espacioMarca = 20 - contador;
-                    raf.seek(posDespues + espacioMarca + 1);
-                    posAntes = raf.getFilePointer();
-                    modelo = raf.readUTF();
-                    System.out.println(modelo);
-                    posDespues = raf.getFilePointer();
-
-                    for (posAntes = 0; posAntes <= posDespues; posAntes++) {
-                        contador++;
-                    }
-                    int espacioModelo = 20 - contador;
-                    raf.seek(posDespues + espacioModelo);
+                    marca = leerCadenaFija(raf, 20);
+                    modelo = leerCadenaFija(raf, 20);
                     estado = raf.readBoolean();
                     borrado = raf.readBoolean();
                     tipo = raf.readInt();
                     idAjeno = raf.readInt();
                     encontrado = true;
                 } else {
-                    raf.seek(b + 54);
-
+                    raf.seek(b + 54); // Saltar al siguiente registro
                 }
+            }
 
-            } while (raf.getFilePointer() < raf.length() && !encontrado);
-            System.out.println(toString());
+            if (encontrado) {
+                System.out.println("Marca: " + marca);
+                System.out.println("Modelo: " + modelo);
+                System.out.println("Estado: " + estado);
+                System.out.println("Borrado: " + borrado);
+                System.out.println("Tipo: " + tipo);
+                System.out.println("ID Ajeno: " + idAjeno);
+            } else {
+                System.out.println("ID no encontrado.");
+            }
+
         } catch (Exception e) {
+            e.printStackTrace();
             return 1;
         }
-        return 0;
+
+        return encontrado ? 0 : 1;
+    }
+
+    private String leerCadenaFija(RandomAccessFile raf, int longitud) throws IOException {
+        byte[] buffer = new byte[longitud];
+        raf.readFully(buffer); // Leer exactamente 'longitud' bytes
+        String texto = new String(buffer, "UTF-8").trim(); // Convertir y eliminar ceros o espacios al final
+        return texto;
     }
 
     @Override
