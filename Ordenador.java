@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 public class Ordenador extends Dispositivo {
 
@@ -29,7 +30,7 @@ public class Ordenador extends Dispositivo {
         this.procesador = "";
         this.tamDisco = 0;
         this.tipoDisco = 0;
-        this.tipo = 2;
+
     }
 
     public int save() {
@@ -51,8 +52,7 @@ public class Ordenador extends Dispositivo {
 
                 raf.writeInt(tamDisco);
                 raf.writeInt(tipoDisco);
-                añadirTipo();
-                añadirIdAjeno();
+                
 
             } else {
                 raf.writeInt(1);
@@ -67,8 +67,7 @@ public class Ordenador extends Dispositivo {
 
                 raf.writeInt(tamDisco);
                 raf.writeInt(tipoDisco);
-                añadirTipo();
-                añadirIdAjeno();
+               
             }
 
         } catch (IOException e) {
@@ -78,61 +77,6 @@ public class Ordenador extends Dispositivo {
         return 0;
     }
 
-    public void añadirIdAjeno() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-
-            raf.seek(raf.length() - 4);
-            raf.writeInt(ultimoId + 1);
-
-        } catch (Exception e) {
-
-            // TODO: handle exception
-        }
-    }
-
-    public void añadirTipo() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-
-            raf.seek(raf.length() - 8);
-            raf.writeInt(tipo);
-
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-    }
-
-    /*
-     * public int load(String nombreFichero) {
-     * 
-     * System.out.println("Introduce el ID:");
-     * 
-     * int idBuscar = sc.nextInt();
-     * 
-     * try (RandomAccessFile raf = new RandomAccessFile(nombreFichero, "r")) {
-     * while (raf.getFilePointer() < raf.length()) {
-     * int idLeido = raf.readInt();
-     * String marcaLeida = raf.readUTF();
-     * String modeloLeido = raf.readUTF();
-     * boolean estadoLeido = raf.readBoolean();
-     * boolean borradoLeido = raf.readBoolean();
-     * int ramLeida = raf.readInt();
-     * String procesadorLeido = raf.readUTF();
-     * int tamDiscoLeido = raf.readInt();
-     * int tipoDiscoLeido = raf.readInt();
-     * 
-     * if (idLeido == idBuscar) {
-     * System.out.println(toString());
-     * return 0;
-     * }
-     * }
-     * System.out.println("Ese dispositivo no se encuentra en el fichero.");
-     * } catch (Exception e) {
-     * return 1;
-     * }
-     * return 0;
-     * }
-     */
     public int getRam() {
         return ram;
     }

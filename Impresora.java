@@ -12,10 +12,12 @@ public class Impresora extends Dispositivo {
 
     public Impresora(String marca, String modelo, boolean estado, int tipoImpresora, boolean color, boolean scanner) {
         super(marca, modelo, estado);
+        this.id = getUltimoId() + 1;
         this.tipoImpresora = tipoImpresora;
         this.color = color;
         this.scanner = scanner;
-        this.tipo = 3;
+        super.setIdAjeno(this.id);
+        super.setTipo(3);
 
     }
 
@@ -35,17 +37,14 @@ public class Impresora extends Dispositivo {
         try (RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw")) {
 
             if (raf.length() != 0) {
-                raf.seek(raf.length() - 10);
-                ultimoId = raf.readInt();
                 raf.seek(raf.length());
 
-                raf.writeInt(ultimoId + 1);
+                raf.writeInt(this.id);
                 raf.writeInt(tipoImpresora);
                 raf.writeBoolean(color);
                 raf.writeBoolean(scanner);
 
-                añadirTipo();
-                añadirIdAjeno();
+                
 
             } else {
                 raf.writeInt(1);
@@ -54,8 +53,7 @@ public class Impresora extends Dispositivo {
                 raf.writeBoolean(color);
                 raf.writeBoolean(scanner);
 
-                añadirTipo();
-                añadirIdAjeno();
+               
             }
 
         } catch (IOException e) {
@@ -65,27 +63,19 @@ public class Impresora extends Dispositivo {
         return 0;
     }
 
-    public void añadirIdAjeno() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-
-            raf.seek(raf.length() - 4);
-            raf.writeInt(ultimoId + 1);
-
+    
+    private int getUltimoId() {
+        int ultimoId = 0;
+        try {
+            RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw");
+            raf.seek(raf.length() - 10);
+            ultimoId = raf.readInt();
+            raf.seek(raf.length());
+            raf.close();
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
-    }
-
-    public void añadirTipo() {
-        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-
-            raf.seek(raf.length() - 8);
-            raf.writeInt(tipo);
-
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
+        return ultimoId;
     }
 
 }

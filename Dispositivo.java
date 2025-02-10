@@ -36,9 +36,8 @@ public class Dispositivo {
         try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
 
             if (raf.length() != 0) {
-                raf.seek(raf.length());
-                long a = raf.getFilePointer() - 54;
-                raf.seek(a);
+                raf.seek(raf.length() - 54);
+
                 int ultimoId = raf.readInt();
 
                 raf.seek(raf.length());
@@ -98,26 +97,47 @@ public class Dispositivo {
 
     public int load() {
         int a;
+        int contador = 0;
+        boolean encontrado = false;
         try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "r")) {
 
             do {
+                long b = raf.getFilePointer();
                 a = raf.readInt();
                 if (a == id) {
+
                     long posAntes = raf.getFilePointer();
-                    String marca = raf.readUTF();
+                    marca = raf.readUTF();
+                    System.out.println(marca);
                     long posDespues = raf.getFilePointer();
-                    int contador = 0;
-                    for (long i = posAntes; i <= posDespues; i++) {
+
+                    for (posAntes = 0; posAntes <= posDespues; posAntes++) {
                         contador++;
                     }
-                    int c = 20-contador
+                    int espacioMarca = 20 - contador;
+                    raf.seek(posDespues + espacioMarca + 1);
+                    posAntes = raf.getFilePointer();
+                    modelo = raf.readUTF();
+                    System.out.println(modelo);
+                    posDespues = raf.getFilePointer();
 
+                    for (posAntes = 0; posAntes <= posDespues; posAntes++) {
+                        contador++;
+                    }
+                    int espacioModelo = 20 - contador;
+                    raf.seek(posDespues + espacioModelo);
+                    estado = raf.readBoolean();
+                    borrado = raf.readBoolean();
+                    tipo = raf.readInt();
+                    idAjeno = raf.readInt();
+                    encontrado = true;
                 } else {
-                    raf.seek(raf.getFilePointer() + 54);
+                    raf.seek(b + 54);
+
                 }
 
-            } while (a != id);
-
+            } while (raf.getFilePointer() < raf.length() && !encontrado);
+            System.out.println(toString());
         } catch (Exception e) {
             return 1;
         }

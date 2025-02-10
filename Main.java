@@ -10,28 +10,7 @@ public class Main {
 
         int a;
         do {
-            /*
-             * try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
-             * while (raf.getFilePointer() < raf.length()) {
-             * listaDispositivos.add(raf.readByte());
-             * 
-             * byte[] arrayBytes = new byte[listaDispositivos.size()];
-             * 
-             * // Convertimos el ArrayList<Byte> a un array de bytes
-             * for (int i = 0; i < listaDispositivos.size(); i++) {
-             * arrayBytes[i] = listaDispositivos.get(i);
-             * }
-             * 
-             * // Convertimos los bytes a String (usando UTF-8)
-             * String contenido = new String(arrayBytes, "UTF-8");
-             * System.out.println(contenido);
-             * 
-             * }
-             * 
-             * } catch (Exception e) {
-             * // TODO: handle exception
-             * }
-             */
+
             System.out.println("MENÚ PRINCIPAL\r\n" + //
                     "--------------\r\n" + //
                     "1. Añadir dispositivo\r\n" + //
@@ -53,10 +32,10 @@ public class Main {
                         case 1:
 
                             System.out.println("Escribe la marca");
-                            String marca = sc.nextLine();
-                            sc.nextLine();
+                            String marca = sc.next();
+
                             System.out.println("Escribe el modelo");
-                            String modelo = sc.nextLine();
+                            String modelo = sc.next();
 
                             Dispositivo dis = new Dispositivo(marca, modelo, true);
                             b = dis.save();
