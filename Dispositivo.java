@@ -113,34 +113,24 @@ public class Dispositivo {
                     idAjeno = raf.readInt();
                     encontrado = true;
                 } else {
-                    raf.seek(b + 54); // Saltar al siguiente registro
+                    raf.seek(b + 54);
                 }
             }
-
-            if (encontrado) {
-                System.out.println("Marca: " + marca);
-                System.out.println("Modelo: " + modelo);
-                System.out.println("Estado: " + estado);
-                System.out.println("Borrado: " + borrado);
-                System.out.println("Tipo: " + tipo);
-                System.out.println("ID Ajeno: " + idAjeno);
-            } else {
-                System.out.println("ID no encontrado.");
-            }
+            
+            System.out.println(toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             return 1;
         }
 
-        return encontrado ? 0 : 1;
+        return 0;
     }
 
     private String leerCadenaFija(RandomAccessFile raf, int longitud) throws IOException {
         byte[] buffer = new byte[longitud];
-        raf.readFully(buffer); // Leer exactamente 'longitud' bytes
-        String texto = new String(buffer, "UTF-8").trim(); // Convertir y eliminar ceros o espacios al final
-        return texto;
+        raf.readFully(buffer);
+        return new String(buffer, "UTF-8").trim();
     }
 
     @Override
