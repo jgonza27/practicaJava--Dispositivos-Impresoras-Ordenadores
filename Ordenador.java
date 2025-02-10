@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.*;
 
 public class Ordenador extends Dispositivo {
 
@@ -8,6 +7,7 @@ public class Ordenador extends Dispositivo {
     private int tamDisco;
     private int tipoDisco;
     private int id;
+    private int tipo;
 
     public Ordenador(String marca, String modelo, boolean estado, int ram, String procesador, int tamDisco,
             int tipoDisco) {
@@ -30,6 +30,7 @@ public class Ordenador extends Dispositivo {
         this.procesador = "";
         this.tamDisco = 0;
         this.tipoDisco = 0;
+        this.tipo = super.getTipo();
 
     }
 
@@ -40,7 +41,8 @@ public class Ordenador extends Dispositivo {
         try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw")) {
 
             if (raf.length() != 0) {
-                raf.writeInt(this.id)
+                raf.seek(raf.length());
+                raf.writeInt(this.id);
                 raf.writeInt(this.ram);
                 long posAntes = raf.getFilePointer();
                 raf.writeUTF(this.procesador);
@@ -52,7 +54,6 @@ public class Ordenador extends Dispositivo {
 
                 raf.writeInt(tamDisco);
                 raf.writeInt(tipoDisco);
-                
 
             } else {
                 raf.writeInt(1);
@@ -67,7 +68,7 @@ public class Ordenador extends Dispositivo {
 
                 raf.writeInt(tamDisco);
                 raf.writeInt(tipoDisco);
-               
+
             }
 
         } catch (IOException e) {
@@ -75,6 +76,46 @@ public class Ordenador extends Dispositivo {
         }
 
         return 0;
+    }
+
+    public int load() {
+        int a;
+        boolean encontrado = false;
+        if (tipo == 2) {
+            try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "r")) {
+                while (raf.getFilePointer() < raf.length() && !encontrado) {
+                    long b = raf.getFilePointer();
+                    a = raf.readInt();
+
+                    if (a == id) {
+                        ram = raf.readInt();
+                        procesador = leerCadenaFija(raf, 20);
+                        tamDisco = raf.readInt();
+                        tipoDisco = raf.readInt();
+                        encontrado = true;
+                    } else {
+                        raf.seek(b + 36);
+                    }
+                }
+
+                System.out.println(toString());
+
+            } catch (Exception e) {
+
+                return 1;
+            }
+
+        } else if (tipo == 3) {
+            Impresora im = new Impresora(id);
+            im.load();
+        }
+        return 0;
+    }
+
+    private String leerCadenaFija(RandomAccessFile raf, int longitud) throws IOException {
+        byte[] buffer = new byte[longitud];
+        raf.readFully(buffer);
+        return new String(buffer, "UTF-8").trim();
     }
 
     public int getRam() {
@@ -129,7 +170,8 @@ public class Ordenador extends Dispositivo {
                 tipoDiscoStr = " desconocido";
                 break;
         }
-        return super.toString() + " Procesador: " + procesador + "." + " Memoria: " + ram + "GB." + " Almacenamiento: "
+        return super.toString() + "ID " + id + " Procesador: " + procesador + "." + " Memoria: " + ram + "GB."
+                + " Almacenamiento: "
                 + tamDisco + "GB" + tipoDiscoStr;
     }
 
@@ -137,12 +179,14 @@ public class Ordenador extends Dispositivo {
         int ultimoId = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw");
-            raf.seek(raf.length() - 36);
-            ultimoId = raf.readInt();
-            raf.seek(raf.length());
-            raf.close();
+            if (raf.length() != 0) {
+                raf.seek(raf.length() - 36);
+                ultimoId = raf.readInt();
+            } else {
+                ultimoId = 0;
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return ultimoId;
     }

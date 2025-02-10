@@ -95,6 +95,29 @@ public class Dispositivo {
         return 0;
     }
 
+    public int mostrarDispositivos() {
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw");) {
+            while (raf.getFilePointer() < raf.length()) {
+                id = raf.readInt();
+                marca = leerCadenaFija(raf, 20);
+                modelo = leerCadenaFija(raf, 20);
+                estado = raf.readBoolean();
+                borrado = raf.readBoolean();
+                tipo = raf.readInt();
+                idAjeno = raf.readInt();
+
+                System.out.println(toString());
+
+            }
+
+        } catch (Exception e) {
+            return 1;
+        }
+
+        return 0;
+
+    }
+
     public int load() {
         int a;
         boolean encontrado = false;
@@ -116,8 +139,6 @@ public class Dispositivo {
                     raf.seek(b + 54);
                 }
             }
-            
-            System.out.println(toString());
 
         } catch (Exception e) {
 
@@ -135,8 +156,10 @@ public class Dispositivo {
 
     @Override
     public String toString() {
-        return "Marca: " + marca + ". Modelo: " + modelo + ". Estado: " + (estado ? "Funciona" : "No Funciona") + "."
-                + ". Borrado: " + (borrado ? "Borrado" : "No Borrado");
+        return "ID " + id + " Marca: " + marca + ". Modelo: " + modelo + ". Estado: "
+                + (estado ? "Funciona" : "No Funciona")
+                + ". Borrado: " + (borrado ? "Borrado" : "No Borrado") + "." + " Tipo: " + tipo + ". IdAjeno "
+                + idAjeno;
     }
 
     public int getId() {

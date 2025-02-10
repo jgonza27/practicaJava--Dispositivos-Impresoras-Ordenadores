@@ -8,7 +8,6 @@ public class Impresora extends Dispositivo {
     private boolean scanner;
     private int id;
     private int tipo;
-    private int ultimoId;
 
     public Impresora(String marca, String modelo, boolean estado, int tipoImpresora, boolean color, boolean scanner) {
         super(marca, modelo, estado);
@@ -44,8 +43,6 @@ public class Impresora extends Dispositivo {
                 raf.writeBoolean(color);
                 raf.writeBoolean(scanner);
 
-                
-
             } else {
                 raf.writeInt(1);
                 raf.writeInt(tipoImpresora);
@@ -53,7 +50,6 @@ public class Impresora extends Dispositivo {
                 raf.writeBoolean(color);
                 raf.writeBoolean(scanner);
 
-               
             }
 
         } catch (IOException e) {
@@ -63,17 +59,46 @@ public class Impresora extends Dispositivo {
         return 0;
     }
 
-    
+    public int load() {
+        int a;
+        boolean encontrado = false;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "r")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                a = raf.readInt();
+
+                if (a == id) {
+                    tipoImpresora = raf.readInt();
+                    color = raf.readBoolean();
+                    scanner = raf.readBoolean();
+                    encontrado = true;
+                } else {
+                    raf.seek(b + 10);
+                }
+            }
+
+            System.out.println(toString());
+
+        } catch (Exception e) {
+
+            return 1;
+        }
+        return 0;
+    }
+
     private int getUltimoId() {
         int ultimoId = 0;
         try {
             RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw");
-            raf.seek(raf.length() - 10);
-            ultimoId = raf.readInt();
-            raf.seek(raf.length());
-            raf.close();
+            if (raf.length() != 0) {
+                raf.seek(raf.length() - 10);
+                ultimoId = raf.readInt();
+            } else {
+                ultimoId = 0;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return ultimoId;
     }

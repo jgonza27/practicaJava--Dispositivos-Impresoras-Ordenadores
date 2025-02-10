@@ -52,15 +52,15 @@ public class Main {
                         case 2:
 
                             System.out.println("Escribe la marca");
-                            marca = sc.nextLine();
-                            sc.nextLine();
+                            marca = sc.next();
+
                             System.out.println("Escribe el modelo");
-                            modelo = sc.nextLine();
+                            modelo = sc.next();
                             System.out.println("Escribe la ram");
                             int ram = sc.nextInt();
                             System.out.println("Escribe el procesador");
-                            String procesador = sc.nextLine();
-                            sc.nextLine();
+                            String procesador = sc.next();
+
                             System.out.println("Escribe el tamaño del disco");
                             int tamDisco = sc.nextInt();
                             System.out.println("Escribe el tipo de disco");
@@ -79,10 +79,10 @@ public class Main {
                             break;
                         case 3:
                             System.out.println("Escribe la marca");
-                            marca = sc.nextLine();
-                            sc.nextLine();
+                            marca = sc.next();
+
                             System.out.println("Escribe el modelo");
-                            modelo = sc.nextLine();
+                            modelo = sc.next();
                             System.out.println("Escribe el tipo");
                             int tipoImpresora = sc.nextInt();
                             System.out.println("Escribe el color");
@@ -103,11 +103,25 @@ public class Main {
                     }
                     break;
                 case 2:
+                    Dispositivo dis = new Dispositivo(1);
+
+                    b = dis.mostrarDispositivos();
+
+                    if (b == 0) {
+                        System.out.println("Todo correcto!");
+
+                    } else {
+                        System.out.println("Halgo ha salido mal");
+                    }
+
+                    break;
+
+                case 3:
                     System.out.println("Introduce el id para mostrar el dispositivo");
                     a = sc.nextInt();
-                    Dispositivo dis = new Dispositivo(a);
+                    Ordenador or = new Ordenador(a);
 
-                    b = dis.load();
+                    b = or.load();
 
                     if (b == 0) {
                         System.out.println("Todo correcto!");
