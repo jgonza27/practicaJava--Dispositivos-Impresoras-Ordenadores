@@ -14,6 +14,7 @@ public class Dispositivo {
     private int idAjeno;
 
     public Dispositivo(String marca, String modelo, boolean estado) {
+        this.id = getUltimoId() + 1;
         this.marca = marca;
         this.modelo = modelo;
         this.estado = estado;
@@ -35,58 +36,29 @@ public class Dispositivo {
 
         try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
 
-            if (raf.length() != 0) {
-                raf.seek(raf.length() - 54);
+            raf.seek(raf.length());
 
-                int ultimoId = raf.readInt();
+            raf.writeInt(id);
 
-                raf.seek(raf.length());
-
-                raf.writeInt(ultimoId + 1);
-
-                long posAntes = raf.getFilePointer();
-                raf.writeUTF(this.marca);
-                long posDespues = raf.getFilePointer();
-                long bytesEscritos = posDespues - posAntes;
-                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
-                    raf.writeByte(0);
-                }
-
-                posAntes = raf.getFilePointer();
-                raf.writeUTF(this.modelo);
-                posDespues = raf.getFilePointer();
-                bytesEscritos = posDespues - posAntes;
-                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
-                    raf.writeByte(0);
-                }
-                raf.writeBoolean(this.estado);
-                raf.writeBoolean(this.borrado);
-                raf.writeInt(tipo);
-                raf.writeInt(idAjeno);
-
-            } else {
-                raf.writeInt(1);
-                long posAntes = raf.getFilePointer();
-                raf.writeUTF(this.marca);
-                long posDespues = raf.getFilePointer();
-                long bytesEscritos = posDespues - posAntes;
-                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
-                    raf.writeByte(0);
-                }
-
-                posAntes = raf.getFilePointer();
-                raf.writeUTF(this.modelo);
-                posDespues = raf.getFilePointer();
-                bytesEscritos = posDespues - posAntes;
-                for (int i = 0; i < longitudFija - bytesEscritos; i++) {
-                    raf.writeByte(0);
-                }
-                raf.writeBoolean(this.estado);
-                raf.writeBoolean(this.borrado);
-                raf.writeInt(tipo);
-                raf.writeInt(idAjeno);
-
+            long posAntes = raf.getFilePointer();
+            raf.writeUTF(this.marca);
+            long posDespues = raf.getFilePointer();
+            long bytesEscritos = posDespues - posAntes;
+            for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                raf.writeByte(0);
             }
+
+            posAntes = raf.getFilePointer();
+            raf.writeUTF(this.modelo);
+            posDespues = raf.getFilePointer();
+            bytesEscritos = posDespues - posAntes;
+            for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                raf.writeByte(0);
+            }
+            raf.writeBoolean(this.estado);
+            raf.writeBoolean(this.borrado);
+            raf.writeInt(tipo);
+            raf.writeInt(idAjeno);
 
         } catch (IOException e) {
             return 1;
@@ -152,6 +124,126 @@ public class Dispositivo {
         byte[] buffer = new byte[longitud];
         raf.readFully(buffer);
         return new String(buffer, "UTF-8").trim();
+    }
+
+    public int delete() {
+        boolean encontrado = false;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                int a = raf.readInt();
+
+                if (a == id) {
+                    raf.seek(b + 45);
+                    raf.writeBoolean(true);
+                    encontrado = true;
+                } else {
+                    raf.seek(b + 54);
+                }
+            }
+
+        } catch (Exception e) {
+
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public int cambioEstado() {
+        boolean encontrado = false;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                int a = raf.readInt();
+
+                if (a == id) {
+                    raf.seek(b + 44);
+                    boolean cambio = raf.readBoolean();
+                    if (cambio == true) {
+                        cambio = false;
+                    } else {
+                        cambio = true;
+                    }
+                    raf.seek(raf.getFilePointer() - 1);
+                    raf.writeBoolean(cambio);
+                    encontrado = true;
+                } else {
+                    raf.seek(b + 54);
+                }
+            }
+
+        } catch (Exception e) {
+
+            return 1;
+        }
+
+        return 0;
+
+    }
+
+    public int modificarDispositivo(int id) {
+        boolean encontrado = false;
+        int longitudFija = 20;
+        try (RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                int a = raf.readInt();
+
+                if (a == id) {
+                    raf.seek(b);
+                    raf.writeInt(id);
+
+                    long posAntes = raf.getFilePointer();
+                    raf.writeUTF(this.marca);
+                    long posDespues = raf.getFilePointer();
+                    long bytesEscritos = posDespues - posAntes;
+                    for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                        raf.writeByte(0);
+                    }
+
+                    posAntes = raf.getFilePointer();
+                    raf.writeUTF(this.modelo);
+                    posDespues = raf.getFilePointer();
+                    bytesEscritos = posDespues - posAntes;
+                    for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                        raf.writeByte(0);
+                    }
+                    raf.writeBoolean(this.estado);
+                    raf.writeBoolean(this.borrado);
+                    raf.writeInt(tipo);
+                    raf.writeInt(idAjeno);
+
+                } else {
+                    raf.seek(b + 54);
+                }
+
+            }
+        } catch (Exception e) {
+
+            return 1;
+        }
+
+        return 0;
+
+    }
+
+    private int getUltimoId() {
+        int ultimoId = 0;
+        try {
+            RandomAccessFile raf = new RandomAccessFile("Dispositivo.bin", "rw");
+            if (raf.length() != 0) {
+                raf.seek(raf.length() - 54);
+                ultimoId = raf.readInt();
+            } else {
+                ultimoId = 0;
+            }
+
+        } catch (Exception e) {
+        }
+        return ultimoId;
     }
 
     @Override
