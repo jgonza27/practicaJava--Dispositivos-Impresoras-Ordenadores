@@ -35,22 +35,12 @@ public class Impresora extends Dispositivo {
 
         try (RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw")) {
 
-            if (raf.length() != 0) {
-                raf.seek(raf.length());
+            raf.seek(raf.length());
 
-                raf.writeInt(this.id);
-                raf.writeInt(tipoImpresora);
-                raf.writeBoolean(color);
-                raf.writeBoolean(scanner);
-
-            } else {
-                raf.writeInt(1);
-                raf.writeInt(tipoImpresora);
-
-                raf.writeBoolean(color);
-                raf.writeBoolean(scanner);
-
-            }
+            raf.writeInt(this.id);
+            raf.writeInt(tipoImpresora);
+            raf.writeBoolean(color);
+            raf.writeBoolean(scanner);
 
         } catch (IOException e) {
             return 1;
@@ -87,10 +77,42 @@ public class Impresora extends Dispositivo {
         return 0;
     }
 
+    public int modificarDispositivo(int id) {
+        super.modificarDispositivo(id);
+        int idAjeno = getIdAjeno();
+        boolean encontrado = false;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                int a = raf.readInt();
+
+                if (a == idAjeno) {
+                    raf.seek(b);
+
+                    raf.writeInt(idAjeno);
+                    raf.writeInt(tipoImpresora);
+
+                    raf.writeBoolean(color);
+                    raf.writeBoolean(scanner);
+
+                    encontrado = true;
+                } else {
+                    raf.seek(b + 10);
+                }
+            }
+        } catch (IOException e) {
+
+            return 1;
+        }
+
+        return 0;
+    }
+
     private int getUltimoId() {
         int ultimoId = 0;
-        try {
-            RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw");
+        try (RandomAccessFile raf = new RandomAccessFile("Impresora.bin", "rw")) {
+
             if (raf.length() != 0) {
                 raf.seek(raf.length() - 10);
                 ultimoId = raf.readInt();
@@ -101,6 +123,62 @@ public class Impresora extends Dispositivo {
 
         }
         return ultimoId;
+    }
+
+    public String toString() {
+
+        String tipoImpresora1 = "";
+        switch (tipoImpresora) {
+            case 0:
+                tipoImpresora1 = " laser";
+                break;
+            case 1:
+                tipoImpresora1 = " inyección de tinta";
+                break;
+            case 2:
+                tipoImpresora1 = " otros";
+                break;
+
+        }
+        return super.toString() + " ID " + id + " tipoImpresora: " + tipoImpresora1 + "." + " color:"
+                + (color ? "Si tiene color" : "No tiene color") + " scanner:"
+                + (scanner ? " la impresora tiene escáner" : " la impresora no tiene escáner");
+    }
+
+    public int getTipoImpresora() {
+        return tipoImpresora;
+    }
+
+    public void setTipoImpresora(int tipoImpresora) {
+        this.tipoImpresora = tipoImpresora;
+    }
+
+    public boolean isColor() {
+        return color;
+    }
+
+    public void setColor(boolean color) {
+        this.color = color;
+    }
+
+    public boolean isScanner() {
+        return scanner;
+    }
+
+    public void setScanner(boolean scanner) {
+        this.scanner = scanner;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
 
 }

@@ -213,8 +213,6 @@ public class Dispositivo {
                     }
                     raf.writeBoolean(this.estado);
                     raf.writeBoolean(this.borrado);
-                    raf.writeInt(tipo);
-                    raf.writeInt(idAjeno);
 
                 } else {
                     raf.seek(b + 54);

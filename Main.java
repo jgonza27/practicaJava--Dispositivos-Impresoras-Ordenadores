@@ -203,18 +203,27 @@ public class Main {
                         System.out.println("Escribe el tipo de disco");
                         int tipoDisco = sc.nextInt();
 
-                        Dispositivo dis3 = new Dispositivo(marca, modelo, estado);
-                        b = dis3.modificarDispositivo(a);
-                        System.out.println("Escribe la ram");
-                        int ram = sc.nextInt();
-                        System.out.println("Escribe el procesador");
-                        String procesador = sc.next();
+                        Ordenador or3 = new Ordenador(marca, modelo, estado, ram, procesador, tamDisco, tipoDisco);
 
-                        System.out.println("Escribe el tamaño del disco");
-                        int tamDisco = sc.nextInt();
-                        System.out.println("Escribe el tipo de disco");
-                        int tipoDisco = sc.nextInt();
+                        or3.modificarDispositivo(a);
 
+                    } else if (c == 3) {
+                        System.out.println("Introduce  la marca nueva:");
+                        String marca = sc.next();
+
+                        System.out.println("Escribe el modelo nuevo");
+                        String modelo = sc.next();
+
+                        System.out.println("Introduce  el estado nuevo");
+                        boolean estado = sc.nextBoolean();
+                        System.out.println("Introduce el tipo de Impresora");
+                        int tipoImpresora = sc.nextInt();
+                        System.out.println("Tiene color?");
+                        boolean color = sc.nextBoolean();
+                        System.out.println("Tiene scanner?");
+                        boolean scanner = sc.nextBoolean();
+                        Impresora im2 = new Impresora(marca, modelo, estado, tipoImpresora, color, scanner);
+                        im2.modificarDispositivo(a);
                     }
 
             }

@@ -118,6 +118,47 @@ public class Ordenador extends Dispositivo {
         return new String(buffer, "UTF-8").trim();
     }
 
+    public int modificarDispositivo(int id) {
+        super.modificarDispositivo(id);
+        int idAjeno = getIdAjeno();
+        boolean encontrado = false;
+        int longitudFija = 20;
+
+        try (RandomAccessFile raf = new RandomAccessFile("Ordenador.bin", "rw")) {
+            while (raf.getFilePointer() < raf.length() && !encontrado) {
+                long b = raf.getFilePointer();
+                int a = raf.readInt();
+
+                if (a == idAjeno) {
+                    raf.seek(b);
+
+                    raf.writeInt(idAjeno);
+                    raf.writeInt(ram);
+
+                    long posAntes = raf.getFilePointer();
+                    raf.writeUTF(this.procesador);
+                    long posDespues = raf.getFilePointer();
+                    long bytesEscritos = posDespues - posAntes;
+                    for (int i = 0; i < longitudFija - bytesEscritos; i++) {
+                        raf.writeByte(0);
+                    }
+
+                    raf.writeInt(tamDisco);
+                    raf.writeInt(tipoDisco);
+
+                    encontrado = true;
+                } else {
+                    raf.seek(b + 36);
+                }
+            }
+        } catch (IOException e) {
+
+            return 1;
+        }
+
+        return 0;
+    }
+
     public int getRam() {
         return ram;
     }
@@ -170,7 +211,7 @@ public class Ordenador extends Dispositivo {
                 tipoDiscoStr = " desconocido";
                 break;
         }
-        return super.toString() + "ID " + id + " Procesador: " + procesador + "." + " Memoria: " + ram + "GB."
+        return super.toString() + " ID " + id + " Procesador: " + procesador + "." + " Memoria: " + ram + "GB."
                 + " Almacenamiento: "
                 + tamDisco + "GB" + tipoDiscoStr;
     }
