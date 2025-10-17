@@ -1,2 +1,12 @@
-*.bin
+# Archivos binarios y compilados
 *.class
+*.bin
+*.jar
+*.war
+*.ear
+
+# Directorios de compilación
+/bin/
+/out/
+/target/
+/build/
